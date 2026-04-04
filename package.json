@@ -1,23 +1,61 @@
 {
-  "name": "farmacy",
-  "version": "0.1.0",
+  "name": "clinicos",
+  "version": "1.0.0",
+  "description": "ClinicOS - Smart Clinic Management",
+  "author": "Nishant Softwares",
   "private": true,
+  "main": "electron/main.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "electron": "electron .",
+    "electron:build": "electron-builder --win --x64"
   },
   "dependencies": {
-    "next": "16.2.2",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "@libsql/client": "^0.17.0",
+    "arctic": "^3.7.0",
+    "drizzle-orm": "^0.45.1",
+    "jose": "^6.2.2",
+    "next": "16.1.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "babel-plugin-react-compiler": "1.0.0",
+    "dotenv": "^16.6.1",
+    "drizzle-kit": "^0.31.10",
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0",
     "eslint": "^9",
-    "eslint-config-next": "16.2.2",
+    "eslint-config-next": "16.1.6",
     "tailwindcss": "^4"
+  },
+  "build": {
+    "appId": "com.nishant.clinicos",
+    "productName": "ClinicOS",
+    "files": [
+      "electron/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "public/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "public/icon.ico",
+      "uninstallerIcon": "public/icon.ico",
+      "installerHeaderIcon": "public/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "ClinicOS"
+    }
   }
 }
