@@ -5,7 +5,7 @@ export default function LoginPage() {
         <div className="text-5xl mb-3">💊</div>
         <h1 className="text-2xl font-extrabold text-gray-800 mb-1">निशांत फार्मा प्रो</h1>
         <p className="text-gray-500 text-sm mb-8">दवा दुकान के लिए स्मार्ट बिलिंग</p>
-        
+        <a
           href="/api/auth/google"
           className="flex items-center justify-center gap-3 w-full border border-gray-300 rounded-xl py-3 px-4 text-gray-700 font-semibold hover:bg-gray-50 transition text-base"
         >
