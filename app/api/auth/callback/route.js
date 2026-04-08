@@ -1,5 +1,4 @@
 import { googleClient } from "@/lib/auth";
-import { decodeIdToken } from "arctic";
 import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 import { googleUsers, users } from "@/lib/schema";
@@ -29,13 +28,24 @@ export async function GET(request) {
     return new Response("Failed to validate code", { status: 400 });
   }
 
-  const claims = decodeIdToken(tokens.idToken());
-  const googleId = claims.sub;
-  const email = claims.email;
-  const name = claims.name;
-  const picture = claims.picture;
+  const accessToken = tokens.accessToken();
+  const userInfoRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  const userInfo = await userInfoRes.json();
 
-  // google_users table update
+  const googleId = userInfo.id;
+  const email = userInfo.email;
+  const name = userInfo.name;
+  const picture = userInfo.picture;
+
+  if (email === DEVELOPER_EMAIL) {
+    await createSessionCookie({ userId: 0, email, name, picture });
+    cookieStore.delete("google_oauth_state");
+    cookieStore.delete("google_code_verifier");
+    return Response.redirect(new URL("/dashboard", request.url).toString());
+  }
+
   const existing = await db
     .select()
     .from(googleUsers)
@@ -44,20 +54,18 @@ export async function GET(request) {
 
   let userId;
   if (existing.length === 0) {
+    await db.insert(googleUsers).values({ googleId, email, name, picture });
     const inserted = await db
-      .insert(googleUsers)
-      .values({ googleId, email, name, picture })
-      .returning({ id: googleUsers.id });
+      .select()
+      .from(googleUsers)
+      .where(eq(googleUsers.googleId, googleId))
+      .limit(1);
     userId = inserted[0].id;
   } else {
     userId = existing[0].id;
-    await db
-      .update(googleUsers)
-      .set({ name, picture })
-      .where(eq(googleUsers.googleId, googleId));
+    await db.update(googleUsers).set({ name, picture }).where(eq(googleUsers.googleId, googleId));
   }
 
-  // users table — KP website इसी में activate करती है
   const existingUser = await db
     .select()
     .from(users)
@@ -65,7 +73,6 @@ export async function GET(request) {
     .limit(1);
 
   if (existingUser.length === 0) {
-    // नया user — trial शुरू
     const trialEnds = new Date();
     trialEnds.setDate(trialEnds.getDate() + TRIAL_DAYS);
     await db.insert(users).values({
@@ -77,7 +84,6 @@ export async function GET(request) {
     });
   }
 
-  // access check
   const userRow = await db
     .select()
     .from(users)
@@ -85,7 +91,6 @@ export async function GET(request) {
     .limit(1);
 
   const u = userRow[0];
-  const isDeveloper = email === DEVELOPER_EMAIL;
   const isActive = u?.status === "active" && u?.expiryDate && new Date(u.expiryDate) > new Date();
   const isTrial = u?.status === "trial" && u?.expiryDate && new Date(u.expiryDate) > new Date();
 
@@ -94,7 +99,7 @@ export async function GET(request) {
   cookieStore.delete("google_oauth_state");
   cookieStore.delete("google_code_verifier");
 
-  if (isDeveloper || isActive || isTrial) {
+  if (isActive || isTrial) {
     return Response.redirect(new URL("/dashboard", request.url).toString());
   }
 
