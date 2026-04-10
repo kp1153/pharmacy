@@ -38,13 +38,14 @@
     "productName": "ClinicOS",
     "files": [
       "electron/**/*",
+      "public/**/*",
       "node_modules/**/*"
     ],
     "directories": {
       "output": "dist"
     },
     "win": {
-      "target": "nsis",
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
       "icon": "public/icon.ico"
     },
     "nsis": {
