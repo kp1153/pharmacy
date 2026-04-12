@@ -28,6 +28,7 @@ export default async function SalesPage() {
                 <th className="text-right px-4 py-3">रकम</th>
                 <th className="text-left px-4 py-3">भुगतान</th>
                 <th className="text-left px-4 py-3">तारीख</th>
+                <th className="px-4 py-3"></th>
               </tr>
             </thead>
             <tbody>
@@ -38,6 +39,9 @@ export default async function SalesPage() {
                   <td className="px-4 py-3 text-right font-bold text-gray-800">₹{s.netAmount}</td>
                   <td className="px-4 py-3 text-gray-500">{s.paymentType}</td>
                   <td className="px-4 py-3 text-gray-400 text-xs">{s.createdAt?.slice(0, 10)}</td>
+                  <td className="px-4 py-3">
+                    <Link href={`/dashboard/sales/${s.id}`} className="text-blue-600 text-xs font-bold">देखो</Link>
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -10,14 +10,21 @@ export async function GET() {
 
 export async function POST(req) {
   const body = await req.json();
+  const invoiceKey = "PUR-" + Date.now();
 
-  const inserted = await db.insert(purchases).values({
+  await db.insert(purchases).values({
     supplierId: body.supplierId ? parseInt(body.supplierId) : null,
     supplierName: body.supplierName || null,
-    invoiceNo: body.invoiceNo || null,
+    invoiceNo: body.invoiceNo || invoiceKey,
     totalAmount: body.totalAmount,
     paidAmount: 0,
-  }).returning({ id: purchases.id });
+  });
+
+  const inserted = await db
+    .select({ id: purchases.id })
+    .from(purchases)
+    .where(eq(purchases.invoiceNo, body.invoiceNo || invoiceKey))
+    .limit(1);
 
   const purchaseId = inserted[0].id;
 
@@ -36,12 +43,15 @@ export async function POST(req) {
       amount: parseFloat(item.amount) || 0,
     });
 
-    // update stock in medicines table
-    const existing = await db.select().from(medicines)
-      .where(eq(medicines.name, item.medicineName)).limit(1);
+    const existing = await db
+      .select()
+      .from(medicines)
+      .where(eq(medicines.name, item.medicineName))
+      .limit(1);
 
     if (existing.length) {
-      await db.update(medicines)
+      await db
+        .update(medicines)
         .set({
           stock: existing[0].stock + parseInt(item.qty),
           batch: item.batch || existing[0].batch,
