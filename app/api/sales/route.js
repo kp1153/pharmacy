@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { sales, saleItems, medicines } from "@/lib/schema";
+import { sales, saleItems, medicines, narcoticLog } from "@/lib/schema";
 import { eq, sql, desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -51,6 +51,23 @@ export async function POST(req) {
       .update(medicines)
       .set({ stock: sql`stock - ${item.qty}` })
       .where(eq(medicines.id, item.medicineId));
+
+    // narcotic auto-log
+    if (item.scheduleType && item.scheduleType !== "general") {
+      await db.insert(narcoticLog).values({
+        medicineId: item.medicineId,
+        medicineName: item.medicineName,
+        scheduleType: item.scheduleType,
+        transactionType: "sale",
+        qty: item.qty,
+        saleId: billId,
+        patientName: body.patient.name || null,
+        patientPhone: body.patient.phone || null,
+        doctorName: body.doctorName || null,
+        prescriptionNo: body.prescriptionNo || null,
+        remarks: null,
+      });
+    }
   }
 
   return NextResponse.json({ success: true, billId });

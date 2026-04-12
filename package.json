@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "@libsql/client": "^0.17.0",
+    "@zxing/browser": "^0.1.5",
+    "@zxing/library": "^0.21.3",
     "arctic": "^3.7.0",
     "drizzle-orm": "^0.45.1",
     "jose": "^6.2.2",
@@ -45,7 +47,14 @@
       "output": "dist"
     },
     "win": {
-      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
       "icon": "public/icon.ico"
     },
     "nsis": {

@@ -27,24 +27,24 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-gray-50 pb-20">
       <div className="bg-blue-700 px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/dashboard" className="text-blue-200 text-sm">← वापस</Link>
-          <h1 className="text-white font-extrabold text-lg">⚙️ सेटिंग</h1>
+          <Link href="/dashboard" className="text-blue-200 text-sm">← Back</Link>
+          <h1 className="text-white font-extrabold text-lg">⚙️ Settings</h1>
         </div>
-        <a href="/api/auth/logout" className="text-blue-200 text-sm border border-blue-400 px-3 py-1.5 rounded-lg">लॉगआउट</a>
+        <a href="/api/auth/logout" className="text-blue-200 text-sm border border-blue-400 px-3 py-1.5 rounded-lg">Logout</a>
       </div>
       <div className="max-w-xl mx-auto px-4 py-4 space-y-3">
         {[
-          { label: "दुकान का नाम", name: "clinicName" },
-          { label: "मालिक का नाम", name: "ownerName" },
-          { label: "फोन", name: "phone", type: "tel" },
-          { label: "ईमेल", name: "email", type: "email" },
-          { label: "पता", name: "address" },
-          { label: "शहर", name: "city" },
-          { label: "राज्य", name: "state" },
-          { label: "पिनकोड", name: "pincode" },
-          { label: "जीएसटीआईएन", name: "gstin" },
-          { label: "ड्रग लाइसेंस नं.", name: "dlNo" },
-          { label: "टैगलाइन", name: "tagline" },
+          { label: "Shop Name", name: "clinicName" },
+          { label: "Owner Name", name: "ownerName" },
+          { label: "Phone", name: "phone", type: "tel" },
+          { label: "Email", name: "email", type: "email" },
+          { label: "Address", name: "address" },
+          { label: "City", name: "city" },
+          { label: "State", name: "state" },
+          { label: "Pincode", name: "pincode" },
+          { label: "GSTIN", name: "gstin" },
+          { label: "Drug License No", name: "dlNo" },
+          { label: "Tagline", name: "tagline" },
         ].map((f) => (
           <div key={f.name}>
             <label className="block text-sm font-semibold text-gray-700 mb-1">{f.label}</label>
@@ -52,16 +52,16 @@ export default function SettingsPage() {
           </div>
         ))}
         <button onClick={handleSubmit} disabled={saving} className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl text-lg disabled:opacity-50">
-          {saved ? "✅ सेव हो गया" : saving ? "सेव हो रहा है..." : "सेव करो"}
+          {saved ? "✅ Saved" : saving ? "Saving..." : "Save"}
         </button>
       </div>
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex md:hidden z-50">
         {[
-          { label: "होम", icon: "🏠", href: "/dashboard" },
-          { label: "दवाइयाँ", icon: "💊", href: "/dashboard/medicines" },
-          { label: "बिल", icon: "🧾", href: "/dashboard/sales" },
-          { label: "मरीज़", icon: "👤", href: "/dashboard/patients" },
-          { label: "सेटिंग", icon: "⚙️", href: "/dashboard/settings" },
+          { label: "Home", icon: "🏠", href: "/dashboard" },
+          { label: "Medicines", icon: "💊", href: "/dashboard/medicines" },
+          { label: "Bills", icon: "🧾", href: "/dashboard/sales" },
+          { label: "Patients", icon: "👤", href: "/dashboard/patients" },
+          { label: "Reports", icon: "📊", href: "/dashboard/reports" },
         ].map((n) => (
           <Link key={n.href} href={n.href} className="flex-1 flex flex-col items-center py-2 text-gray-500 hover:text-blue-600 text-xs font-medium">
             <span className="text-xl">{n.icon}</span>

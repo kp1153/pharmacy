@@ -11,7 +11,7 @@ export default function NewMedicine() {
   function handle(e) { setForm({ ...form, [e.target.name]: e.target.value }); }
 
   async function handleSubmit() {
-    if (!form.name || !form.mrp) { alert("नाम और एमआरपी ज़रूरी है"); return; }
+    if (!form.name || !form.mrp) { alert("Name and MRP required"); return; }
     setSaving(true);
     await fetch("/api/medicines", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
     router.push("/dashboard/medicines");
@@ -22,21 +22,21 @@ export default function NewMedicine() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <div className="bg-blue-700 px-4 py-4 flex items-center gap-3">
-        <Link href="/dashboard/medicines" className="text-blue-200 text-sm">← वापस</Link>
-        <h1 className="text-white font-extrabold text-lg">💊 नई दवाई जोड़ो</h1>
+        <Link href="/dashboard/medicines" className="text-blue-200 text-sm">← Back</Link>
+        <h1 className="text-white font-extrabold text-lg">💊 New Medicine</h1>
       </div>
       <div className="max-w-xl mx-auto px-4 py-4 space-y-3">
         {[
-          { label: "दवाई का नाम *", name: "name" },
-          { label: "जेनेरिक नाम", name: "generic" },
-          { label: "कंपनी", name: "company" },
-          { label: "बैच नंबर", name: "batch" },
-          { label: "एक्सपायरी (YYYY-MM)", name: "expiry", placeholder: "2026-12" },
-          { label: "एमआरपी *", name: "mrp", type: "number" },
-          { label: "खरीद मूल्य", name: "purchasePrice", type: "number" },
-          { label: "स्टॉक", name: "stock", type: "number" },
-          { label: "रैक", name: "rack" },
-          { label: "एचएसएन कोड", name: "hsn" },
+          { label: "Medicine Name *", name: "name" },
+          { label: "Generic Name", name: "generic" },
+          { label: "Company", name: "company" },
+          { label: "Batch No", name: "batch" },
+          { label: "Expiry (YYYY-MM)", name: "expiry", placeholder: "2026-12" },
+          { label: "MRP *", name: "mrp", type: "number" },
+          { label: "Purchase Price", name: "purchasePrice", type: "number" },
+          { label: "Stock", name: "stock", type: "number" },
+          { label: "Rack", name: "rack" },
+          { label: "HSN Code", name: "hsn" },
         ].map((f) => (
           <div key={f.name}>
             <label className="block text-sm font-semibold text-gray-700 mb-1">{f.label}</label>
@@ -44,7 +44,7 @@ export default function NewMedicine() {
           </div>
         ))}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">जीएसटी %</label>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">GST %</label>
           <select name="gst" value={form.gst} onChange={handle} className={inp}>
             <option value="0">0%</option>
             <option value="5">5%</option>
@@ -53,7 +53,7 @@ export default function NewMedicine() {
           </select>
         </div>
         <button onClick={handleSubmit} disabled={saving} className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl text-lg disabled:opacity-50">
-          {saving ? "सेव हो रहा है..." : "सेव करो"}
+          {saving ? "Saving..." : "Save"}
         </button>
       </div>
     </div>

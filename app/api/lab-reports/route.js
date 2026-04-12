@@ -16,13 +16,13 @@ export async function GET(req) {
 
 export async function POST(req) {
   const body = await req.json();
-  const inserted = await db.insert(labReports).values({
+  await db.insert(labReports).values({
     patientId: body.patientId,
     prescriptionId: body.prescriptionId || null,
     category: body.category,
     testName: body.testName,
     result: body.result || null,
     reportDate: body.reportDate || null,
-  }).returning({ id: labReports.id });
-  return NextResponse.json({ success: true, id: inserted[0].id });
+  });
+  return NextResponse.json({ success: true });
 }

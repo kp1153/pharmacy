@@ -11,7 +11,7 @@ export default function NewPatient() {
   function handle(e) { setForm({ ...form, [e.target.name]: e.target.value }); }
 
   async function handleSubmit() {
-    if (!form.name) { alert("नाम ज़रूरी है"); return; }
+    if (!form.name) { alert("Name is required"); return; }
     setSaving(true);
     await fetch("/api/patients", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
     router.push("/dashboard/patients");
@@ -22,16 +22,16 @@ export default function NewPatient() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <div className="bg-blue-700 px-4 py-4 flex items-center gap-3">
-        <Link href="/dashboard/patients" className="text-blue-200 text-sm">← वापस</Link>
-        <h1 className="text-white font-extrabold text-lg">👤 नया मरीज़</h1>
+        <Link href="/dashboard/patients" className="text-blue-200 text-sm">← Back</Link>
+        <h1 className="text-white font-extrabold text-lg">👤 New Patient</h1>
       </div>
       <div className="max-w-xl mx-auto px-4 py-4 space-y-3">
         {[
-          { label: "नाम *", name: "name" },
-          { label: "फोन", name: "phone", type: "tel" },
-          { label: "उम्र", name: "age", type: "number" },
-          { label: "पता", name: "address" },
-          { label: "तकलीफ", name: "complaint" },
+          { label: "Name *", name: "name" },
+          { label: "Phone", name: "phone", type: "tel" },
+          { label: "Age", name: "age", type: "number" },
+          { label: "Address", name: "address" },
+          { label: "Complaint", name: "complaint" },
         ].map((f) => (
           <div key={f.name}>
             <label className="block text-sm font-semibold text-gray-700 mb-1">{f.label}</label>
@@ -39,16 +39,16 @@ export default function NewPatient() {
           </div>
         ))}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">लिंग</label>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Gender</label>
           <select name="gender" value={form.gender} onChange={handle} className={inp}>
-            <option value="">चुनो</option>
-            <option value="पुरुष">पुरुष</option>
-            <option value="महिला">महिला</option>
-            <option value="अन्य">अन्य</option>
+            <option value="">Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
           </select>
         </div>
         <button onClick={handleSubmit} disabled={saving} className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl text-lg disabled:opacity-50">
-          {saving ? "सेव हो रहा है..." : "सेव करो"}
+          {saving ? "Saving..." : "Save"}
         </button>
       </div>
     </div>

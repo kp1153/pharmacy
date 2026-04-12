@@ -21,10 +21,19 @@ export async function PUT(req, { params }) {
     mrp: parseFloat(body.mrp),
     purchasePrice: body.purchasePrice ? parseFloat(body.purchasePrice) : null,
     stock: parseInt(body.stock) || 0,
+    reorderLevel: parseInt(body.reorderLevel) || 10,
     unit: body.unit || "strip",
     rack: body.rack || null,
     hsn: body.hsn || null,
     gst: parseFloat(body.gst) || 12,
+    barcode: body.barcode || null,
+    scheduleType: body.scheduleType || "general",
   }).where(eq(medicines.id, parseInt(id)));
+  return NextResponse.json({ success: true });
+}
+
+export async function DELETE(req, { params }) {
+  const { id } = await params;
+  await db.delete(medicines).where(eq(medicines.id, parseInt(id)));
   return NextResponse.json({ success: true });
 }

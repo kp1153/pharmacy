@@ -8,7 +8,6 @@ export default function PWAInstall() {
   const [installed, setInstalled] = useState(false);
 
   useEffect(() => {
-    // Service Worker register करो
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/sw.js')
@@ -16,13 +15,11 @@ export default function PWAInstall() {
         .catch((err) => console.warn('SW registration failed:', err));
     }
 
-    // PWA already installed है?
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setInstalled(true);
       return;
     }
 
-    // Install prompt capture करो
     const handler = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -31,7 +28,6 @@ export default function PWAInstall() {
 
     window.addEventListener('beforeinstallprompt', handler);
 
-    // Install complete होने पर
     window.addEventListener('appinstalled', () => {
       setInstalled(true);
       setShowButton(false);
@@ -57,7 +53,7 @@ export default function PWAInstall() {
     <button
       onClick={handleInstall}
       className="fixed bottom-20 right-4 z-50 flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all"
-      title="App Install करें"
+      title="Install App"
     >
       <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3" />
