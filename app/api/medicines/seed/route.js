@@ -45,7 +45,7 @@ export async function GET(req) {
         batch: null,
         expiry: null,
       }))
-    ).onConflictDoNothing();
+    );
 
     return NextResponse.json({
       success: true,
