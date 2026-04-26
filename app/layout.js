@@ -4,12 +4,12 @@ import PWAInstall from "@/components/PWAInstall";
 
 export const metadata = {
   title: "निशांत फार्मा प्रो",
-  description: "Smart Clinic Management by Nishant Softwares",
+  description: "Smart Pharmacy Billing by Nishant Softwares",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "ClinicOS",
+    title: "Pharma Pro",
   },
   formatDetection: {
     telephone: false,
@@ -17,7 +17,7 @@ export const metadata = {
   openGraph: {
     type: "website",
     title: "निशांत फार्मा प्रो",
-    description: "Smart Clinic Management by Nishant Softwares",
+    description: "Smart Pharmacy Billing by Nishant Softwares",
   },
 };
 
@@ -36,12 +36,11 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
           rel="stylesheet"
         />
-        {/* PWA */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="ClinicOS" />
+        <meta name="apple-mobile-web-app-title" content="Pharma Pro" />
         <link rel="apple-touch-icon" href="/icon_128.png" />
         <link rel="apple-touch-icon" sizes="256x256" href="/icon_256.png" />
         <meta name="msapplication-TileColor" content="#2563eb" />

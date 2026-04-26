@@ -3,7 +3,10 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function SettingsPage() {
-  const [form, setForm] = useState({ clinicName: "", ownerName: "", address: "", phone: "", email: "", gstin: "", dlNo: "", city: "", state: "", pincode: "", tagline: "" });
+  const [form, setForm] = useState({
+    pharmacyName: "", ownerName: "", address: "", phone: "",
+    email: "", gstin: "", dlNo: "", city: "", state: "", pincode: "", tagline: "",
+  });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -15,7 +18,11 @@ export default function SettingsPage() {
 
   async function handleSubmit() {
     setSaving(true);
-    await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+    await fetch("/api/settings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -30,11 +37,11 @@ export default function SettingsPage() {
           <Link href="/dashboard" className="text-blue-200 text-sm">← Back</Link>
           <h1 className="text-white font-extrabold text-lg">⚙️ Settings</h1>
         </div>
-        <a href="/api/auth/logout" className="text-blue-200 text-sm border border-blue-400 px-3 py-1.5 rounded-lg">Logout</a>
+        <a href="/api/logout" className="text-blue-200 text-sm border border-blue-400 px-3 py-1.5 rounded-lg">Logout</a>
       </div>
       <div className="max-w-xl mx-auto px-4 py-4 space-y-3">
         {[
-          { label: "Shop Name", name: "clinicName" },
+          { label: "Pharmacy Name", name: "pharmacyName" },
           { label: "Owner Name", name: "ownerName" },
           { label: "Phone", name: "phone", type: "tel" },
           { label: "Email", name: "email", type: "email" },
@@ -48,10 +55,20 @@ export default function SettingsPage() {
         ].map((f) => (
           <div key={f.name}>
             <label className="block text-sm font-semibold text-gray-700 mb-1">{f.label}</label>
-            <input type={f.type || "text"} name={f.name} value={form[f.name] || ""} onChange={handle} className={inp} />
+            <input
+              type={f.type || "text"}
+              name={f.name}
+              value={form[f.name] || ""}
+              onChange={handle}
+              className={inp}
+            />
           </div>
         ))}
-        <button onClick={handleSubmit} disabled={saving} className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl text-lg disabled:opacity-50">
+        <button
+          onClick={handleSubmit}
+          disabled={saving}
+          className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl text-lg disabled:opacity-50"
+        >
           {saved ? "✅ Saved" : saving ? "Saving..." : "Save"}
         </button>
       </div>

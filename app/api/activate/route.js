@@ -7,11 +7,17 @@ const db = createClient({
 
 export async function POST(request) {
   const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.ACTIVATION_SECRET}`) {
+  const body = await request.json();
+
+  const secret = process.env.HUB_SECRET;
+  const bearerOk = authHeader === `Bearer ${secret}`;
+  const bodyOk = body.secret === secret;
+
+  if (!bearerOk && !bodyOk) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const { email, months } = await request.json();
+  const { email, months } = body;
   if (!email) return Response.json({ error: "email required" }, { status: 400 });
 
   const expiry = new Date();
@@ -23,11 +29,13 @@ export async function POST(request) {
   });
 
   if (existing.rows.length === 0) {
+    // User नहीं है → pre_activations में डालो
     await db.execute({
-      sql: "INSERT INTO users (email, status, expiry_date, reminder_sent) VALUES (?, 'active', ?, 0)",
-      args: [email, expiry.toISOString()],
+      sql: "INSERT INTO pre_activations (email) VALUES (?) ON CONFLICT(email) DO NOTHING",
+      args: [email],
     });
   } else {
+    // User है → activate करो
     await db.execute({
       sql: "UPDATE users SET status = 'active', expiry_date = ?, reminder_sent = 0 WHERE email = ?",
       args: [expiry.toISOString(), email],

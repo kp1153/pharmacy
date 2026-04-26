@@ -126,11 +126,11 @@ export default async function ReportsPage() {
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex md:hidden z-50">
         {[
-          { label: "होम", icon: "🏠", href: "/dashboard" },
-          { label: "दवाइयाँ", icon: "💊", href: "/dashboard/medicines" },
-          { label: "बिल", icon: "🧾", href: "/dashboard/sales" },
-          { label: "मरीज़", icon: "👤", href: "/dashboard/patients" },
-          { label: "सेटिंग", icon: "⚙️", href: "/dashboard/settings" },
+          { label: "Home", icon: "🏠", href: "/dashboard" },
+          { label: "Medicines", icon: "💊", href: "/dashboard/medicines" },
+          { label: "Bills", icon: "🧾", href: "/dashboard/sales" },
+          { label: "Patients", icon: "👤", href: "/dashboard/patients" },
+          { label: "Reports", icon: "📊", href: "/dashboard/reports" },
         ].map((n) => (
           <Link key={n.href} href={n.href} className="flex-1 flex flex-col items-center py-2 text-gray-500 hover:text-blue-600 text-xs font-medium">
             <span className="text-xl">{n.icon}</span>

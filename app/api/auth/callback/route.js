@@ -1,7 +1,7 @@
 import { googleClient } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { db } from "@/lib/db";
-import { googleUsers, users } from "@/lib/schema";
+import { users, preActivations } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { createSessionCookie } from "@/lib/session";
 
@@ -18,90 +18,109 @@ export async function GET(request) {
   const codeVerifier = cookieStore.get("google_code_verifier")?.value ?? null;
 
   if (!code || !state || !storedState || !codeVerifier || state !== storedState) {
-    return new Response("Invalid OAuth state", { status: 400 });
+    return NextResponse.redirect(new URL("/login?error=invalid", request.url));
   }
 
-  let tokens;
   try {
-    tokens = await googleClient.validateAuthorizationCode(code, codeVerifier);
-  } catch {
-    return new Response("Failed to validate code", { status: 400 });
-  }
+    const tokens = await googleClient.validateAuthorizationCode(code, codeVerifier);
+    const accessToken = tokens.accessToken();
 
-  const accessToken = tokens.accessToken();
-  const userInfoRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  const userInfo = await userInfoRes.json();
+    const userInfoRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const userInfo = await userInfoRes.json();
 
-  const googleId = userInfo.id;
-  const email = userInfo.email;
-  const name = userInfo.name;
-  const picture = userInfo.picture;
+    const email = userInfo.email;
+    const name = userInfo.name;
+    const picture = userInfo.picture;
 
-  if (email === DEVELOPER_EMAIL) {
-    await createSessionCookie({ userId: 0, email, name, picture });
+    // --- Developer shortcut ---
+    if (email === DEVELOPER_EMAIL) {
+      await createSessionCookie({ userId: 0, email, name, picture });
+      cookieStore.delete("google_oauth_state");
+      cookieStore.delete("google_code_verifier");
+      return Response.redirect(new URL("/dashboard", request.url).toString());
+    }
+
+    // --- users table check ---
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+
+    if (existingUser.length === 0) {
+      // नया user → trial INSERT
+      const trialEnds = new Date();
+      trialEnds.setDate(trialEnds.getDate() + TRIAL_DAYS);
+
+      await db.insert(users).values({
+        email,
+        name,
+        status: "trial",
+        expiryDate: trialEnds.toISOString(),
+        reminderSent: 0,
+      });
+
+      // pre_activations check → payment पहले हुई थी?
+      const preAct = await db
+        .select()
+        .from(preActivations)
+        .where(eq(preActivations.email, email))
+        .limit(1);
+
+      if (preAct.length > 0) {
+        const activeExpiry = new Date();
+        activeExpiry.setFullYear(activeExpiry.getFullYear() + 1);
+
+        await db
+          .update(users)
+          .set({
+            status: "active",
+            expiryDate: activeExpiry.toISOString(),
+            reminderSent: 0,
+          })
+          .where(eq(users.email, email));
+
+        await db
+          .delete(preActivations)
+          .where(eq(preActivations.email, email));
+      }
+    } else {
+      // पुराना user → name update करो
+      await db
+        .update(users)
+        .set({ name })
+        .where(eq(users.email, email));
+    }
+
+    // Fresh read
+    const userRow = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+
+    const u = userRow[0];
+
+    await createSessionCookie({ userId: u.id, email, name, picture });
     cookieStore.delete("google_oauth_state");
     cookieStore.delete("google_code_verifier");
-    return Response.redirect(new URL("/dashboard", request.url).toString());
+
+    const now = new Date();
+    const expiry = u.expiryDate ? new Date(u.expiryDate) : null;
+
+    const isActive = u.status === "active" && expiry && now < expiry;
+    const isTrial  = u.status === "trial"  && expiry && now < expiry;
+
+    if (isActive || isTrial) {
+      return Response.redirect(new URL("/dashboard", request.url).toString());
+    }
+
+    return Response.redirect(new URL("/expired", request.url).toString());
+
+  } catch (e) {
+    console.error("callback error:", e);
+    return Response.redirect(new URL("/login?error=failed", request.url).toString());
   }
-
-  const existing = await db
-    .select()
-    .from(googleUsers)
-    .where(eq(googleUsers.googleId, googleId))
-    .limit(1);
-
-  let userId;
-  if (existing.length === 0) {
-    await db.insert(googleUsers).values({ googleId, email, name, picture });
-    const inserted = await db
-      .select()
-      .from(googleUsers)
-      .where(eq(googleUsers.googleId, googleId))
-      .limit(1);
-    userId = inserted[0].id;
-  } else {
-    userId = existing[0].id;
-    await db.update(googleUsers).set({ name, picture }).where(eq(googleUsers.googleId, googleId));
-  }
-
-  const existingUser = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
-
-  if (existingUser.length === 0) {
-    const trialEnds = new Date();
-    trialEnds.setDate(trialEnds.getDate() + TRIAL_DAYS);
-    await db.insert(users).values({
-      email,
-      name,
-      status: "trial",
-      expiryDate: trialEnds.toISOString(),
-      reminderSent: 0,
-    });
-  }
-
-  const userRow = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
-
-  const u = userRow[0];
-  const isActive = u?.status === "active" && u?.expiryDate && new Date(u.expiryDate) > new Date();
-  const isTrial = u?.status === "trial" && u?.expiryDate && new Date(u.expiryDate) > new Date();
-
-  await createSessionCookie({ userId, email, name, picture });
-
-  cookieStore.delete("google_oauth_state");
-  cookieStore.delete("google_code_verifier");
-
-  if (isActive || isTrial) {
-    return Response.redirect(new URL("/dashboard", request.url).toString());
-  }
-
-  return Response.redirect(new URL("/expired", request.url).toString());
 }

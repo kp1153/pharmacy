@@ -18,7 +18,7 @@ export default function MedicinesList({ medicines }) {
       (m.company || "").toLowerCase().includes(search.toLowerCase());
     if (filter === "low") return matchSearch && m.stock <= 10;
     if (filter === "expiry") return matchSearch && m.expiry && m.expiry <= thirtyStr && m.stock > 0;
-    if (filter === "out") return matchSearch && m.stock === 0;
+    if (filter === "out") return matchSearch && m.stock <= 0;
     return matchSearch;
   });
 
@@ -56,7 +56,7 @@ export default function MedicinesList({ medicines }) {
         filtered.map((m) => {
           const expired = m.expiry && m.expiry < today;
           const nearExpiry = m.expiry && m.expiry <= thirtyStr && !expired;
-          const outOfStock = m.stock === 0;
+          const outOfStock = m.stock <= 0;
           const lowStock = m.stock > 0 && m.stock <= 10;
 
           return (

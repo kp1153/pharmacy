@@ -47,12 +47,13 @@ export async function POST(req) {
       amount: item.amount,
     });
 
-    await db
-      .update(medicines)
-      .set({ stock: sql`stock - ${item.qty}` })
-      .where(eq(medicines.id, item.medicineId));
+    if (item.medicineId) {
+      await db
+        .update(medicines)
+        .set({ stock: sql`MAX(0, stock - ${item.qty})` })
+        .where(eq(medicines.id, item.medicineId));
+    }
 
-    // narcotic auto-log
     if (item.scheduleType && item.scheduleType !== "general") {
       await db.insert(narcoticLog).values({
         medicineId: item.medicineId,

@@ -20,6 +20,15 @@ export default async function ReceiptPage({ params }) {
   const settingsResult = await db.select().from(clinicSettings).limit(1);
   const s = settingsResult[0] || {};
 
+  const totalGST = items.reduce((sum, item) => {
+    const base = item.amount / (1 + (item.gst || 0) / 100);
+    return sum + (item.amount - base);
+  }, 0);
+
+  const taxableAmount = items.reduce((sum, item) => {
+    return sum + item.amount / (1 + (item.gst || 0) / 100);
+  }, 0);
+
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
       <div className="bg-blue-700 px-4 py-4 flex items-center justify-between print:hidden">
@@ -73,6 +82,7 @@ export default async function ReceiptPage({ params }) {
               <th className="text-left py-1">Medicine</th>
               <th className="text-center py-1">Qty</th>
               <th className="text-right py-1">MRP</th>
+              <th className="text-right py-1">GST%</th>
               <th className="text-right py-1">Amount</th>
             </tr>
           </thead>
@@ -86,6 +96,7 @@ export default async function ReceiptPage({ params }) {
                 </td>
                 <td className="text-center py-2 text-gray-700">{item.qty}</td>
                 <td className="text-right py-2 text-gray-700">₹{item.mrp}</td>
+                <td className="text-right py-2 text-gray-500">{item.gst || 0}%</td>
                 <td className="text-right py-2 font-semibold text-gray-900">₹{item.amount}</td>
               </tr>
             ))}
@@ -102,6 +113,18 @@ export default async function ReceiptPage({ params }) {
               <span>Discount</span>
               <span>- ₹{sale.discount}</span>
             </div>
+          )}
+          {s.gstin && (
+            <>
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>Taxable Amount</span>
+                <span>₹{taxableAmount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>GST</span>
+                <span>₹{totalGST.toFixed(2)}</span>
+              </div>
+            </>
           )}
           <div className="flex justify-between font-extrabold text-lg text-gray-900 border-t border-gray-200 pt-2 mt-1">
             <span>Total</span>
