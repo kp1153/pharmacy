@@ -18,7 +18,8 @@ export async function POST(request) {
   }
 
   const { email, months } = body;
-  if (!email) return Response.json({ error: "email required" }, { status: 400 });
+  if (!email)
+    return Response.json({ error: "email required" }, { status: 400 });
 
   const expiry = new Date();
   expiry.setMonth(expiry.getMonth() + (months || 12));
@@ -42,5 +43,10 @@ export async function POST(request) {
     });
   }
 
-  return Response.json({ ok: true, email, expiryDate: expiry.toISOString() });
+  return Response.json({
+    success: true,
+    ok: true,
+    email,
+    expiryDate: expiry.toISOString(),
+  });
 }
