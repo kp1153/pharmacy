@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { pharmacySettings } from "@/lib/schema";
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 
 export async function GET() {
   const session = await getSession();

@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 import { requireAccess } from "@/lib/access";
 import { db } from "@/lib/db";
-import { sales, saleItems, clinicSettings } from "@/lib/schema";
+import { sales, saleItems, pharmacySettings } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
 import PrintButton from "./PrintButton";
