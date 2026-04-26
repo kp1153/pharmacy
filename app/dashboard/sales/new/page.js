@@ -114,65 +114,6 @@ function MedSearch({ index, item, medicines, onSelect }) {
     </div>
   );
 }
-// Promise Order button — out of stock पर दिखेगा
-{
-  selectedMed && selectedMed.stock <= 0 && (
-    <div className="mt-2">
-      <button
-        type="button"
-        onMouseDown={async () => {
-          if (!window._patientName) {
-            alert("पहले Patient Name भरो");
-            return;
-          }
-          await fetch("/api/promise-orders", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              patientName: window._patientName,
-              patientPhone: window._patientPhone || "",
-              medicineName: selectedMed.name,
-              qty: 1,
-            }),
-          });
-          alert("✅ Promise Order save हो गया");
-        }}
-        className="w-full bg-amber-500 text-white text-sm font-bold py-2 rounded-lg"
-      >
-        📋 Promise Order बनाओ
-      </button>
-    </div>
-  );
-}
-{
-  selectedMed && selectedMed.stock <= 0 && (
-    <div className="mt-2">
-      <button
-        type="button"
-        onMouseDown={async () => {
-          if (!window._patientName) {
-            alert("Please fill Patient Name first");
-            return;
-          }
-          await fetch("/api/promise-orders", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              patientName: window._patientName,
-              patientPhone: window._patientPhone || "",
-              medicineName: selectedMed.name,
-              qty: 1,
-            }),
-          });
-          alert("Promise Order saved successfully");
-        }}
-        className="w-full bg-amber-500 text-white text-sm font-bold py-2 rounded-lg"
-      >
-        📋 Promise Order
-      </button>
-    </div>
-  );
-}
 
 export default function NewSale() {
   const router = useRouter();
