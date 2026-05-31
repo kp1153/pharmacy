@@ -10,7 +10,7 @@ export default function LoginPage() {
           <img src="https://www.google.com/favicon.ico" className="w-5 h-5" alt="Google" />
           Login with Google
         </a>
-        <p className="text-xs text-gray-400 mt-6">7 days free trial — no card required</p>
+        <p className="text-xs text-gray-400 mt-6"></p>
       </div>
     </main>
   );

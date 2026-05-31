@@ -11,9 +11,7 @@ export default async function Dashboard() {
   const [medCount] = await db.select({ count: sql`count(*)` }).from(medicines);
   const [patCount] = await db.select({ count: sql`count(*)` }).from(patients);
   const [saleCount] = await db.select({ count: sql`count(*)` }).from(sales);
-  const [purchaseCount] = await db
-    .select({ count: sql`count(*)` })
-    .from(purchases);
+  const [purchaseCount] = await db.select({ count: sql`count(*)` }).from(purchases);
 
   const today = new Date().toISOString().split("T")[0];
   const [todaySales] = await db
@@ -26,9 +24,7 @@ export default async function Dashboard() {
   const [expiryCount] = await db
     .select({ count: sql`count(*)` })
     .from(medicines)
-    .where(
-      sql`expiry <= ${thirtyDays.toISOString().split("T")[0]} AND stock > 0`,
-    );
+    .where(sql`expiry <= ${thirtyDays.toISOString().split("T")[0]} AND stock > 0`);
 
   const [reorderCount] = await db
     .select({ count: sql`count(*)` })
@@ -41,111 +37,38 @@ export default async function Dashboard() {
     .where(sql`stock = 0`);
 
   const cards = [
-    {
-      label: "Medicines",
-      value: medCount.count,
-      icon: "💊",
-      href: "/dashboard/medicines",
-      color: "bg-blue-50 border-blue-200 text-blue-700",
-    },
-    {
-      label: "Patients",
-      value: patCount.count,
-      icon: "👤",
-      href: "/dashboard/patients",
-      color: "bg-green-50 border-green-200 text-green-700",
-    },
-    {
-      label: "Sales",
-      value: saleCount.count,
-      icon: "🧾",
-      href: "/dashboard/sales",
-      color: "bg-amber-50 border-amber-200 text-amber-700",
-    },
-    {
-      label: "Purchases",
-      value: purchaseCount.count,
-      icon: "📦",
-      href: "/dashboard/purchases",
-      color: "bg-purple-50 border-purple-200 text-purple-700",
-    },
-    {
-      label: "Today's Sales",
-      value: "₹" + Number(todaySales.total).toFixed(0),
-      icon: "💰",
-      href: "/dashboard/sales",
-      color: "bg-emerald-50 border-emerald-200 text-emerald-700",
-    },
-    {
-      label: "Near Expiry",
-      value: expiryCount.count,
-      icon: "⚠️",
-      href: "/dashboard/medicines",
-      color: "bg-red-50 border-red-200 text-red-700",
-    },
-    {
-      label: "Low Stock",
-      value: reorderCount.count,
-      icon: "📉",
-      href: "/dashboard/medicines",
-      color: "bg-orange-50 border-orange-200 text-orange-700",
-    },
-    {
-      label: "Out of Stock",
-      value: outOfStockCount.count,
-      icon: "❌",
-      href: "/dashboard/medicines",
-      color: "bg-gray-50 border-gray-200 text-gray-600",
-    },
+    { label: "Medicines", value: medCount.count, icon: "💊", href: "/dashboard/medicines", color: "bg-blue-50 border-blue-200 text-blue-700" },
+    { label: "Patients", value: patCount.count, icon: "👤", href: "/dashboard/sales", color: "bg-green-50 border-green-200 text-green-700" },
+    { label: "Sales", value: saleCount.count, icon: "🧾", href: "/dashboard/sales", color: "bg-amber-50 border-amber-200 text-amber-700" },
+    { label: "Purchases", value: purchaseCount.count, icon: "📦", href: "/dashboard/purchases", color: "bg-purple-50 border-purple-200 text-purple-700" },
+    { label: "Today's Sales", value: "₹" + Number(todaySales.total).toFixed(0), icon: "💰", href: "/dashboard/sales", color: "bg-emerald-50 border-emerald-200 text-emerald-700" },
+    { label: "Near Expiry", value: expiryCount.count, icon: "⚠️", href: "/dashboard/alerts/expiry", color: "bg-red-50 border-red-200 text-red-700" },
+    { label: "Low Stock", value: reorderCount.count, icon: "📉", href: "/dashboard/alerts/reorder", color: "bg-orange-50 border-orange-200 text-orange-700" },
+    { label: "Out of Stock", value: outOfStockCount.count, icon: "❌", href: "/dashboard/medicines", color: "bg-gray-50 border-gray-200 text-gray-600" },
   ];
 
   const quickLinks = [
     { label: "New Bill", icon: "🧾", href: "/dashboard/sales/new" },
     { label: "Add Medicine", icon: "💊", href: "/dashboard/medicines/new" },
-    { label: "Add Patient", icon: "👤", href: "/dashboard/patients/new" },
     { label: "New Purchase", icon: "📦", href: "/dashboard/purchases/new" },
+    { label: "Credit", icon: "📒", href: "/dashboard/credit" },
   ];
 
-  // NEW: 3 नए links
   const moreLinks = [
-    {
-      label: "Narcotic Log",
-      icon: "📋",
-      href: "/dashboard/narcotic-log",
-      color: "bg-orange-50 border border-orange-200 text-orange-700",
-    },
-    {
-      label: "Bank Reconciliation",
-      icon: "🏦",
-      href: "/dashboard/bank-reconciliation",
-      color: "bg-teal-50 border border-teal-200 text-teal-700",
-    },
+    { label: "Narcotic Log", icon: "📋", href: "/dashboard/narcotic-log", color: "bg-orange-50 border border-orange-200 text-orange-700" },
+    { label: "Bank", icon: "🏦", href: "/dashboard/bank-reconciliation", color: "bg-teal-50 border border-teal-200 text-teal-700" },
+    { label: "GST Export", icon: "📊", href: "/dashboard/gst-export", color: "bg-indigo-50 border border-indigo-200 text-indigo-700" },
+    { label: "Tally Export", icon: "📁", href: "/dashboard/tally-export", color: "bg-violet-50 border border-violet-200 text-violet-700" },
+    { label: "Promise Orders", icon: "🕐", href: "/dashboard/promise-orders", color: "bg-amber-50 border border-amber-200 text-amber-700" },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="bg-blue-700 px-4 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-white font-extrabold text-xl">💊 Pharma Pro</h1>
-          <p className="text-blue-200 text-sm">Dashboard</p>
-        </div>
-        <a
-          href="/api/logout"
-          className="text-blue-200 text-sm border border-blue-400 px-3 py-1.5 rounded-lg"
-        >
-          Logout
-        </a>
-      </div>
-
-      <div className="px-4 py-4">
-        <h2 className="text-base font-bold text-gray-700 mb-3">
-          Quick Actions
-        </h2>
+    <div className="pb-4">
+      <div className="py-4">
+        <h2 className="text-base font-bold text-gray-700 mb-3">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           {quickLinks.map((q) => (
-            <Link
-              key={q.href}
-              href={q.href}
+            <Link key={q.href} href={q.href}
               className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl p-4 text-center font-bold text-sm transition active:scale-95"
             >
               <div className="text-2xl mb-1">{q.icon}</div>
@@ -154,14 +77,10 @@ export default async function Dashboard() {
           ))}
         </div>
 
-        <h2 className="text-base font-bold text-gray-700 mb-3">
-          More Features
-        </h2>
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        <h2 className="text-base font-bold text-gray-700 mb-3">More Features</h2>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
           {moreLinks.map((m) => (
-            <Link
-              key={m.href}
-              href={m.href}
+            <Link key={m.href} href={m.href}
               className={`rounded-xl p-4 text-center font-bold text-sm transition active:scale-95 ${m.color}`}
             >
               <div className="text-2xl mb-1">{m.icon}</div>
@@ -173,9 +92,7 @@ export default async function Dashboard() {
         <h2 className="text-base font-bold text-gray-700 mb-3">Summary</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {cards.map((c) => (
-            <Link
-              key={c.href + c.label}
-              href={c.href}
+            <Link key={c.href + c.label} href={c.href}
               className={`border rounded-xl p-4 ${c.color} transition active:scale-95`}
             >
               <div className="text-2xl mb-1">{c.icon}</div>
@@ -185,31 +102,6 @@ export default async function Dashboard() {
           ))}
         </div>
       </div>
-
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex md:hidden z-50">
-        {[
-          { label: "Home", icon: "🏠", href: "/dashboard" },
-          { label: "Medicines", icon: "💊", href: "/dashboard/medicines" },
-          { label: "Bills", icon: "🧾", href: "/dashboard/sales" },
-          { label: "Patients", icon: "👤", href: "/dashboard/patients" },
-          { label: "Reports", icon: "📊", href: "/dashboard/reports" },
-          {
-            label: "Promise Orders",
-            icon: "📋",
-            href: "/dashboard/promise-orders",
-            color: "bg-amber-50 border border-amber-200 text-amber-700",
-          },
-        ].map((n) => (
-          <Link
-            key={n.href}
-            href={n.href}
-            className="flex-1 flex flex-col items-center py-2 text-gray-500 hover:text-blue-600 text-xs font-medium"
-          >
-            <span className="text-xl">{n.icon}</span>
-            {n.label}
-          </Link>
-        ))}
-      </nav>
     </div>
   );
 }

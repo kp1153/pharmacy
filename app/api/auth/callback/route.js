@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { createSessionCookie } from "@/lib/session";
 import { NextResponse } from "next/server";
 
-const DEVELOPER_EMAIL = "prasad.kamta@gmail.com";
+const ALLOWED_EMAILS = process.env.ALLOWED_EMAILS?.split(",").map((e) => e.trim()) || [];
 
 export async function GET(request) {
   const url = new URL(request.url);
@@ -37,7 +37,7 @@ export async function GET(request) {
       return NextResponse.redirect(new URL("/login?error=failed", request.url));
     }
 
-    if (email !== DEVELOPER_EMAIL) {
+    if (!ALLOWED_EMAILS.includes(email)) {
       return NextResponse.redirect(new URL("/login?error=unauthorized", request.url));
     }
 
