@@ -120,12 +120,6 @@ export default async function Dashboard() {
       href: "/dashboard/bank-reconciliation",
       color: "bg-teal-50 border border-teal-200 text-teal-700",
     },
-    {
-      label: "Stores",
-      icon: "🏪",
-      href: "/dashboard/stores",
-      color: "bg-violet-50 border border-violet-200 text-violet-700",
-    },
   ];
 
   return (
