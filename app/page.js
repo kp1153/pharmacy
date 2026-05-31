@@ -51,7 +51,7 @@ export default function Home() {
         </Link>
       </header>
 
-      <section className="text-center py-20 px-6">
+      <section className="text-center py-16 px-6">
         <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-2 leading-tight">
           The Fastest Billing Software<br />
           <span className="text-green-400">Built for Indian Medical Stores</span>
@@ -59,7 +59,7 @@ export default function Home() {
         <p className="text-blue-300 text-xl font-semibold mb-2">
           सबसे तेज़ बिलिंग सॉफ्टवेयर — भारतीय दवा दुकानों के लिए
         </p>
-        <p className="text-blue-200 text-base mb-3 max-w-2xl mx-auto">
+        <p className="text-blue-200 text-base mb-2 max-w-2xl mx-auto">
           GST Billing · Stock Management · Credit Tracking · Narcotic Log — all in one place.
         </p>
         <p className="text-blue-300 text-sm mb-8 max-w-xl mx-auto">
@@ -69,6 +69,29 @@ export default function Home() {
           className="bg-green-500 hover:bg-green-400 text-white px-10 py-4 rounded-xl font-bold text-lg shadow-lg transition">
           Get Started · शुरू करें
         </Link>
+      </section>
+
+      <section className="max-w-3xl mx-auto px-6 mb-10">
+        <div className="bg-green-900/60 border border-green-400/40 rounded-2xl p-6 text-center">
+          <p className="text-green-300 font-bold text-lg mb-1">🎁 Free 1-Month Demo Available</p>
+          <p className="text-white font-semibold text-base mb-2">एक महीना बिल्कुल मुफ्त डेमो उपलब्ध है</p>
+          <p className="text-green-200 text-sm mb-2">
+            Interested in a free demo? Contact us with your Gmail ID — we will activate your access within 24 hours.
+          </p>
+          <p className="text-green-100 text-sm mb-5">
+            डेमो के लिए अपनी Gmail ID के साथ संपर्क करें — 24 घंटे में एक्सेस मिलेगा।
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a href="mailto:prasad.kamta@gmail.com"
+              className="bg-white/10 hover:bg-white/20 border border-green-400/40 text-green-200 px-5 py-2.5 rounded-xl font-semibold text-sm transition">
+              📧 prasad.kamta@gmail.com
+            </a>
+            <a href="https://wa.me/919996865069" target="_blank" rel="noopener noreferrer"
+              className="bg-green-500 hover:bg-green-400 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition">
+              📱 WhatsApp: 9996865069
+            </a>
+          </div>
+        </div>
       </section>
 
       <section className="max-w-6xl mx-auto px-6 pb-16 grid grid-cols-1 md:grid-cols-3 gap-6">
